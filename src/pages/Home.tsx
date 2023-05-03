@@ -1,5 +1,6 @@
-import S from "./style";
-import { SearchClose, SearchOutlined } from "assets/icons";
+import styled from "styled-components";
+import SearchInput from "components/SearchInput";
+import SuggestionModal from "components/SuggestionModal";
 
 const Home = () => {
   return (
@@ -7,41 +8,47 @@ const Home = () => {
       <S.SearchContainer>
         <S.Header>
           <S.Title>질환명을 검색해주세요.</S.Title>
-          <S.InputWrapper>
-            <S.InputDescWrapper>
-              <S.InputDescIconWrapper>
-                <SearchOutlined color="#a7afb7" />
-              </S.InputDescIconWrapper>
-              <span>질환명을 입력해주세요</span>
-            </S.InputDescWrapper>
-            <S.Input name="q" type="search" />
-            <S.ClearButton>
-              <SearchClose color="#ffffff" />
-            </S.ClearButton>
-          </S.InputWrapper>
-          <S.SearchButton type="button">
-            <SearchOutlined />
-          </S.SearchButton>
+          <SearchInput />
         </S.Header>
-        <S.RecentSearchSection>
-          <S.RecentSearchHeader>
-            <h2>최근 검색어</h2>
-          </S.RecentSearchHeader>
-          <S.RecentSearchList>
-            <S.RecentSearchItem>
-              <S.RecentSearchIconBtn type="button">
-                <SearchOutlined color="#d6cdcd" />
-              </S.RecentSearchIconBtn>
-              <S.RecentSearchTextBtn type="button">
-                갑상선
-              </S.RecentSearchTextBtn>
-            </S.RecentSearchItem>
-          </S.RecentSearchList>
-          <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
-        </S.RecentSearchSection>
+        <SuggestionModal />
       </S.SearchContainer>
     </S.FakeMain>
   );
 };
 
 export default Home;
+
+const S = {
+  FakeMain: styled.main`
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+    width: 100vw;
+    height: 100vh;
+    background-color: #c1ebf6;
+  `,
+
+  SearchContainer: styled.div`
+    max-width: 470px;
+    width: 100%;
+  `,
+
+  Header: styled.header`
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    background-color: #ffffff;
+    border: 2px solid;
+    border-radius: 42px;
+    border-color: #ffffff;
+  `,
+
+  Title: styled.h1`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  `,
+};
