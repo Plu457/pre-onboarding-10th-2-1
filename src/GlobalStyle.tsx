@@ -46,6 +46,14 @@ textarea:focus {
   outline: none;
   box-shadow: none;
 }
+
+//* input type search 설정시 나오는 X 버튼 제거
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button,
+input::-webkit-search-results-decoration{
+    display:none;
+}
 `;
 
 export default GlobalStyle;
