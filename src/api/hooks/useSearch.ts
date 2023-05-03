@@ -15,6 +15,7 @@ const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): UseSearchRe
   const [error, setError] = useState<Error | undefined>(undefined);
 
   const search = async (searchTerm: string) => {
+    console.info('calling api');
     try {
       setIsLoading(true);
       const responseData = await fetchAPI(searchTerm);
