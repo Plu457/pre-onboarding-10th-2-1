@@ -6,13 +6,21 @@ interface SearchInputProps {
   searchTerm: string;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSearch: any;
+  onInputClick: () => void;
+  hideInputDesc: boolean;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ searchTerm, onInputChange, onSearch }) => {
+const SearchInput: React.FC<SearchInputProps> = ({
+  searchTerm,
+  onInputChange,
+  onSearch,
+  onInputClick,
+  hideInputDesc,
+}) => {
   return (
     <>
-      <S.InputWrapper>
-        <S.InputDescWrapper>
+      <S.InputWrapper onClick={onInputClick}>
+        <S.InputDescWrapper style={{ display: hideInputDesc ? 'none' : 'flex' }}>
           <S.InputDescIconWrapper>
             <SearchOutlined color="#a7afb7" />
           </S.InputDescIconWrapper>

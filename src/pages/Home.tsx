@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { fetchSearchResults, useSearch } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
 
-interface SearchResult {
+export interface SearchResult {
   name: string;
   id: number;
 }
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
+  const [headerBorderColor, setHeaderBorderColor] = useState('#ffffff');
+  const [hideInputDesc, setHideInputDesc] = useState(false);
+
   const { data, isLoading, error, search } = useSearch<SearchResult[]>(fetchSearchResults);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,18 +25,41 @@ const Home = () => {
     search(searchTerm);
   };
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setShowSuggestionModal(false);
+        setHeaderBorderColor('#ffffff');
+        setHideInputDesc(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <S.FakeMain>
-      <S.SearchContainer>
-        <S.Header>
+      <S.SearchContainer ref={wrapperRef}>
+        <S.Header style={{ borderColor: headerBorderColor }}>
           <S.Title>질환명을 검색해주세요.</S.Title>
           <SearchInput
             searchTerm={searchTerm}
             onInputChange={handleInputChange}
             onSearch={handleSearch}
+            onInputClick={() => {
+              setShowSuggestionModal(true);
+              setHeaderBorderColor('#4a94e4');
+              setHideInputDesc(true);
+            }}
+            hideInputDesc={hideInputDesc}
           />
         </S.Header>
-        <SuggestionModal />
+        {showSuggestionModal ? <SuggestionModal data={data} /> : null}
       </S.SearchContainer>
     </S.FakeMain>
   );

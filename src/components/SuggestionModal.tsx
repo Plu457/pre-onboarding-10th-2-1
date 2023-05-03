@@ -1,19 +1,26 @@
-import { SearchOutlined } from "assets/icons";
-import styled from "styled-components";
+import { SearchOutlined } from 'assets/icons';
+import { SearchResult } from 'pages/Home';
+import styled from 'styled-components';
 
-const SuggestionModal = () => {
+interface SuggestionModalProps {
+  data: SearchResult[] | undefined;
+}
+
+const SuggestionModal: React.FC<SuggestionModalProps> = ({ data }) => {
   return (
     <S.RecentSearchSection>
       <S.RecentSearchHeader>
         <h2>최근 검색어</h2>
       </S.RecentSearchHeader>
       <S.RecentSearchList>
-        <S.RecentSearchItem>
-          <S.RecentSearchIconBtn type="button">
-            <SearchOutlined color="#d6cdcd" />
-          </S.RecentSearchIconBtn>
-          <S.RecentSearchTextBtn type="button">갑상선</S.RecentSearchTextBtn>
-        </S.RecentSearchItem>
+        {data?.map((item) => (
+          <S.RecentSearchItem key={item.id}>
+            <S.RecentSearchIconBtn type="button">
+              <SearchOutlined color="#d6cdcd" />
+            </S.RecentSearchIconBtn>
+            <S.RecentSearchTextBtn type="button">{item.name}</S.RecentSearchTextBtn>
+          </S.RecentSearchItem>
+        ))}
       </S.RecentSearchList>
       <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
     </S.RecentSearchSection>
