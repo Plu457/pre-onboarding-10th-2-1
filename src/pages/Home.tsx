@@ -8,32 +8,18 @@ export interface SearchResult {
   id: number;
 }
 
-const saveRecentKeyword = (keyword: string) => {
-  const recentKeywords = sessionStorage.getItem('recentlyKeyword');
-  let recentKeywordsArray: string[] = recentKeywords ? JSON.parse(recentKeywords) : [];
-
-  if (!recentKeywordsArray.includes(keyword)) {
-    recentKeywordsArray.push(keyword);
-    sessionStorage.setItem('recentlyKeyword', JSON.stringify(recentKeywordsArray));
-  }
-};
-
-const getRecentKeywords = (): string[] => {
-  const recentKeywords = sessionStorage.getItem('recentlyKeyword');
-  return recentKeywords ? JSON.parse(recentKeywords) : [];
-};
-
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [isRecentSearch, setIsRecentSearch] = useState(true);
 
-  const { data, search, clearData } = useSearch(fetchSearchResults);
+  const { data, search, clearData, saveRecentKeyword, getRecentKeywords } =
+    useSearch(fetchSearchResults);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   useEffect(() => {
     if (debouncedSearchTerm) {
-      search(debouncedSearchTerm);
+      search(debouncedSearchTerm, true);
     } else {
       clearData();
     }
@@ -63,7 +49,7 @@ const Home = () => {
 
   const handleSearch = (keyword: string) => {
     saveRecentKeyword(keyword);
-    search(keyword);
+    search(keyword, true);
   };
 
   return (
