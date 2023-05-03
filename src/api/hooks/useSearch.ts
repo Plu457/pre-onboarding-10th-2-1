@@ -6,6 +6,7 @@ interface UseSearchReturnType<T> {
   error: Error | undefined;
   isError: boolean;
   search: (searchTerm: string) => Promise<void>;
+  clearData: () => void;
 }
 
 const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): UseSearchReturnType<T> => {
@@ -25,7 +26,9 @@ const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): UseSearchRe
     }
   };
 
-  return { data, isLoading, error, isError: error !== undefined, search };
+  const clearData = () => setData(undefined);
+
+  return { data, isLoading, error, isError: error !== undefined, search, clearData };
 };
 
 export default useSearch;

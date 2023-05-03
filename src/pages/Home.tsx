@@ -13,21 +13,19 @@ const Home = () => {
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [isRecentSearch, setIsRecentSearch] = useState(true);
 
-  const { data, isLoading, error, search } = useSearch(fetchSearchResults);
+  const { data, search, clearData } = useSearch(fetchSearchResults);
+
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
-  useEffect(() => {
-    setIsRecentSearch(searchTerm.length === 0);
-  }, [searchTerm]);
-
   useEffect(() => {
     if (debouncedSearchTerm) {
       search(debouncedSearchTerm);
+    } else {
+      clearData();
     }
-  }, [debouncedSearchTerm, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchTerm]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -43,11 +41,9 @@ const Home = () => {
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSearch = () => {
-    search(searchTerm);
+    const value = e.target.value;
+    setSearchTerm(value);
+    setIsRecentSearch(value.length === 0);
   };
 
   return (
@@ -58,8 +54,8 @@ const Home = () => {
           <SearchInput
             searchTerm={searchTerm}
             onInputChange={handleInputChange}
-            onSearch={handleSearch}
-            onInputClick={() => setShowSuggestionModal(!showSuggestionModal)}
+            onSearch={() => search(searchTerm)}
+            onInputClick={() => setShowSuggestionModal(true)}
             showSuggestionModal={showSuggestionModal}
             onFocus={() => {
               setShowSuggestionModal(true);
@@ -75,6 +71,7 @@ const Home = () => {
     </S.FakeMain>
   );
 };
+
 export default Home;
 
 const S = {

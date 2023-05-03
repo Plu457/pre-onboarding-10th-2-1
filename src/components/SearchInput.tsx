@@ -42,11 +42,11 @@ const SearchInput: React.FC<SearchInputProps> = ({
           onClick={onInputClick}
           onFocus={onFocus}
         />
-        {searchTerm && (
+        {searchTerm ? (
           <S.ClearButton onClick={handleClearInput}>
             <SearchClose color="#ffffff" />
           </S.ClearButton>
-        )}
+        ) : null}
       </S.InputWrapper>
       <S.SearchButton type="button" onClick={onSearch}>
         <SearchOutlined />
