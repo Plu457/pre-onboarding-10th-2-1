@@ -3,26 +3,51 @@ import { SearchResult } from 'pages/Home';
 import styled from 'styled-components';
 
 interface SuggestionModalProps {
-  data: SearchResult[] | undefined;
+  data: SearchResult[];
   isRecentSearch: boolean;
+  recentKeywords: string[];
 }
 
-const SuggestionModal: React.FC<SuggestionModalProps> = ({ data, isRecentSearch }) => {
+const SuggestionModal: React.FC<SuggestionModalProps> = ({
+  data,
+  isRecentSearch,
+  recentKeywords,
+}) => {
   return (
     <S.RecentSearchSection>
-      <S.RecentSearchHeader>
-        <h2>{isRecentSearch ? '최근 검색어' : '추천 검색어'}</h2>
-      </S.RecentSearchHeader>
-      <S.RecentSearchList>
-        {data?.map((item) => (
-          <S.RecentSearchItem key={item.id}>
-            <S.RecentSearchIconBtn type="button">
-              <SearchOutlined color="#d6cdcd" />
-            </S.RecentSearchIconBtn>
-            <S.RecentSearchTextBtn type="button">{item.name}</S.RecentSearchTextBtn>
-          </S.RecentSearchItem>
-        ))}
-      </S.RecentSearchList>
+      {isRecentSearch ? (
+        <>
+          <S.RecentSearchHeader>
+            <h2>최근 검색어</h2>
+          </S.RecentSearchHeader>
+          <S.RecentSearchList>
+            {recentKeywords?.map((keyword, index) => (
+              <S.RecentSearchItem key={`recent-search-${index}`}>
+                <S.RecentSearchIconBtn type="button">
+                  <SearchOutlined color="#d6cdcd" />
+                </S.RecentSearchIconBtn>
+                <S.RecentSearchTextBtn type="button">{keyword}</S.RecentSearchTextBtn>
+              </S.RecentSearchItem>
+            ))}
+          </S.RecentSearchList>
+        </>
+      ) : (
+        <>
+          <S.RecentSearchHeader>
+            <h2>검색 결과</h2>
+          </S.RecentSearchHeader>
+          <S.RecentSearchList>
+            {data?.map((item) => (
+              <S.RecentSearchItem key={item.id}>
+                <S.RecentSearchIconBtn type="button">
+                  <SearchOutlined color="#d6cdcd" />
+                </S.RecentSearchIconBtn>
+                <S.RecentSearchTextBtn type="button">{item.name}</S.RecentSearchTextBtn>
+              </S.RecentSearchItem>
+            ))}
+          </S.RecentSearchList>
+        </>
+      )}
       <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
     </S.RecentSearchSection>
   );

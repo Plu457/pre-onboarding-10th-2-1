@@ -8,6 +8,21 @@ export interface SearchResult {
   id: number;
 }
 
+const saveRecentKeyword = (keyword: string) => {
+  const recentKeywords = sessionStorage.getItem('recentlyKeyword');
+  let recentKeywordsArray: string[] = recentKeywords ? JSON.parse(recentKeywords) : [];
+
+  if (!recentKeywordsArray.includes(keyword)) {
+    recentKeywordsArray.push(keyword);
+    sessionStorage.setItem('recentlyKeyword', JSON.stringify(recentKeywordsArray));
+  }
+};
+
+const getRecentKeywords = (): string[] => {
+  const recentKeywords = sessionStorage.getItem('recentlyKeyword');
+  return recentKeywords ? JSON.parse(recentKeywords) : [];
+};
+
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
@@ -46,6 +61,11 @@ const Home = () => {
     setIsRecentSearch(value.length === 0);
   };
 
+  const handleSearch = (keyword: string) => {
+    saveRecentKeyword(keyword);
+    search(keyword);
+  };
+
   return (
     <S.FakeMain>
       <S.SearchContainer ref={wrapperRef}>
@@ -54,7 +74,7 @@ const Home = () => {
           <SearchInput
             searchTerm={searchTerm}
             onInputChange={handleInputChange}
-            onSearch={() => search(searchTerm)}
+            onSearch={() => handleSearch(searchTerm)}
             onInputClick={() => setShowSuggestionModal(true)}
             showSuggestionModal={showSuggestionModal}
             onFocus={() => {
@@ -65,7 +85,11 @@ const Home = () => {
           />
         </S.Header>
         {showSuggestionModal ? (
-          <SuggestionModal data={data} isRecentSearch={isRecentSearch} />
+          <SuggestionModal
+            data={data}
+            isRecentSearch={isRecentSearch}
+            recentKeywords={getRecentKeywords()}
+          />
         ) : null}
       </S.SearchContainer>
     </S.FakeMain>
