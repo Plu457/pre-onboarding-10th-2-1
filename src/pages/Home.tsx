@@ -1,14 +1,36 @@
-import styled from "styled-components";
-import SearchInput from "components/SearchInput";
-import SuggestionModal from "components/SuggestionModal";
+import { useState } from 'react';
+import styled from 'styled-components';
+import { fetchSearchResults, useSearch } from 'api';
+import { SearchInput, SuggestionModal } from 'components';
+
+interface SearchResult {
+  name: string;
+  id: number;
+}
 
 const Home = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const { data, isLoading, error, search } = useSearch<SearchResult[]>(fetchSearchResults);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    search(searchTerm);
+  };
+
   return (
     <S.FakeMain>
       <S.SearchContainer>
         <S.Header>
           <S.Title>질환명을 검색해주세요.</S.Title>
-          <SearchInput />
+          <SearchInput
+            searchTerm={searchTerm}
+            onInputChange={handleInputChange}
+            onSearch={handleSearch}
+          />
         </S.Header>
         <SuggestionModal />
       </S.SearchContainer>

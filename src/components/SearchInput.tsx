@@ -1,12 +1,14 @@
-import React from "react";
-import { SearchClose, SearchOutlined } from "assets/icons";
-import styled from "styled-components";
+import React from 'react';
+import { SearchClose, SearchOutlined } from 'assets/icons';
+import styled from 'styled-components';
 
 interface SearchInputProps {
-  // Add required props here
+  searchTerm: string;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearch: any;
 }
 
-const SearchInput: React.FC<SearchInputProps> = () => {
+const SearchInput: React.FC<SearchInputProps> = ({ searchTerm, onInputChange, onSearch }) => {
   return (
     <>
       <S.InputWrapper>
@@ -16,12 +18,12 @@ const SearchInput: React.FC<SearchInputProps> = () => {
           </S.InputDescIconWrapper>
           <span>질환명을 입력해주세요</span>
         </S.InputDescWrapper>
-        <S.Input name="q" type="search" />
-        <S.ClearButton>
+        <S.Input name="q" type="search" value={searchTerm} onChange={onInputChange} />
+        <S.ClearButton onClick={() => onInputChange({ target: { value: '' } } as any)}>
           <SearchClose color="#ffffff" />
         </S.ClearButton>
       </S.InputWrapper>
-      <S.SearchButton type="button">
+      <S.SearchButton type="button" onClick={onSearch}>
         <SearchOutlined />
       </S.SearchButton>
     </>
