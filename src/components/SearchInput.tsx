@@ -5,9 +5,11 @@ import styled from 'styled-components';
 interface SearchInputProps {
   searchTerm: string;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearch: any;
+  onSearch: () => void;
   onInputClick: () => void;
-  hideInputDesc: boolean;
+  showSuggestionModal: boolean;
+  onFocus: () => void;
+  isRecentSearch: boolean;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
@@ -15,21 +17,36 @@ const SearchInput: React.FC<SearchInputProps> = ({
   onInputChange,
   onSearch,
   onInputClick,
-  hideInputDesc,
+  showSuggestionModal,
+  onFocus,
+  isRecentSearch,
 }) => {
+  const handleClearInput = () => {
+    onInputChange({ target: { value: '' } } as any);
+  };
+
   return (
     <>
-      <S.InputWrapper onClick={onInputClick}>
-        <S.InputDescWrapper style={{ display: hideInputDesc ? 'none' : 'flex' }}>
+      <S.InputWrapper>
+        <S.InputDescWrapper style={{ display: showSuggestionModal ? 'none' : 'flex' }}>
           <S.InputDescIconWrapper>
             <SearchOutlined color="#a7afb7" />
           </S.InputDescIconWrapper>
           <span>질환명을 입력해주세요</span>
         </S.InputDescWrapper>
-        <S.Input name="q" type="search" value={searchTerm} onChange={onInputChange} />
-        <S.ClearButton onClick={() => onInputChange({ target: { value: '' } } as any)}>
-          <SearchClose color="#ffffff" />
-        </S.ClearButton>
+        <S.Input
+          name="q"
+          type="search"
+          value={searchTerm}
+          onChange={onInputChange}
+          onClick={onInputClick}
+          onFocus={onFocus}
+        />
+        {searchTerm && (
+          <S.ClearButton onClick={handleClearInput}>
+            <SearchClose color="#ffffff" />
+          </S.ClearButton>
+        )}
       </S.InputWrapper>
       <S.SearchButton type="button" onClick={onSearch}>
         <SearchOutlined />

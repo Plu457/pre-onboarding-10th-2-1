@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { fetchSearchResults, useSearch } from 'api';
+import { fetchSearchResults, useDebounce, useSearch } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
 
 export interface SearchResult {
@@ -11,19 +11,20 @@ export interface SearchResult {
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
-  const [headerBorderColor, setHeaderBorderColor] = useState('#ffffff');
-  const [hideInputDesc, setHideInputDesc] = useState(false);
+  const [isRecentSearch, setIsRecentSearch] = useState(true);
 
-  const { data, isLoading, error, search } = useSearch<SearchResult[]>(fetchSearchResults);
+  const { data, isLoading, error, search } = useSearch(fetchSearchResults);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  useEffect(() => {
+    setIsRecentSearch(searchTerm.length === 0);
+  }, [searchTerm]);
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    search(searchTerm);
-  };
+  useEffect(() => {
+    if (debouncedSearchTerm) {
+      search(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, search]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -31,8 +32,7 @@ const Home = () => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
         setShowSuggestionModal(false);
-        setHeaderBorderColor('#ffffff');
-        setHideInputDesc(false);
+        setSearchTerm('');
       }
     };
 
@@ -42,29 +42,39 @@ const Home = () => {
     };
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearch = () => {
+    search(searchTerm);
+  };
+
   return (
     <S.FakeMain>
       <S.SearchContainer ref={wrapperRef}>
-        <S.Header style={{ borderColor: headerBorderColor }}>
+        <S.Header style={{ borderColor: showSuggestionModal ? '#4a94e4' : '#ffffff' }}>
           <S.Title>질환명을 검색해주세요.</S.Title>
           <SearchInput
             searchTerm={searchTerm}
             onInputChange={handleInputChange}
             onSearch={handleSearch}
-            onInputClick={() => {
+            onInputClick={() => setShowSuggestionModal(!showSuggestionModal)}
+            showSuggestionModal={showSuggestionModal}
+            onFocus={() => {
               setShowSuggestionModal(true);
-              setHeaderBorderColor('#4a94e4');
-              setHideInputDesc(true);
+              setIsRecentSearch(true);
             }}
-            hideInputDesc={hideInputDesc}
+            isRecentSearch={isRecentSearch}
           />
         </S.Header>
-        {showSuggestionModal ? <SuggestionModal data={data} /> : null}
+        {showSuggestionModal ? (
+          <SuggestionModal data={data} isRecentSearch={isRecentSearch} />
+        ) : null}
       </S.SearchContainer>
     </S.FakeMain>
   );
 };
-
 export default Home;
 
 const S = {

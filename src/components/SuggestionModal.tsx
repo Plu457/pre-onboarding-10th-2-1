@@ -4,13 +4,14 @@ import styled from 'styled-components';
 
 interface SuggestionModalProps {
   data: SearchResult[] | undefined;
+  isRecentSearch: boolean;
 }
 
-const SuggestionModal: React.FC<SuggestionModalProps> = ({ data }) => {
+const SuggestionModal: React.FC<SuggestionModalProps> = ({ data, isRecentSearch }) => {
   return (
     <S.RecentSearchSection>
       <S.RecentSearchHeader>
-        <h2>최근 검색어</h2>
+        <h2>{isRecentSearch ? '최근 검색어' : '추천 검색어'}</h2>
       </S.RecentSearchHeader>
       <S.RecentSearchList>
         {data?.map((item) => (
