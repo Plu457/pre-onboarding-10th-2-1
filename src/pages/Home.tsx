@@ -12,6 +12,7 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [isRecentSearch, setIsRecentSearch] = useState(true);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const { data, search, clearData, saveRecentKeyword, getRecentKeywords } =
     useSearch(fetchSearchResults);
@@ -50,6 +51,7 @@ const Home = () => {
   const handleSearch = (keyword: string) => {
     saveRecentKeyword(keyword);
     search(keyword, true);
+    setSelectedIndex(null);
   };
 
   return (
@@ -58,8 +60,10 @@ const Home = () => {
         <S.Header style={{ borderColor: showSuggestionModal ? '#4a94e4' : '#ffffff' }}>
           <S.Title>질환명을 검색해주세요.</S.Title>
           <SearchInput
+            data={data}
             searchTerm={searchTerm}
             onInputChange={handleInputChange}
+            handleSearch={handleSearch}
             onSearch={() => handleSearch(searchTerm)}
             onInputClick={() => setShowSuggestionModal(true)}
             showSuggestionModal={showSuggestionModal}
@@ -68,6 +72,9 @@ const Home = () => {
               setIsRecentSearch(true);
             }}
             isRecentSearch={isRecentSearch}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            recentKeywords={getRecentKeywords()}
           />
         </S.Header>
         {showSuggestionModal ? (
@@ -75,6 +82,7 @@ const Home = () => {
             data={data}
             isRecentSearch={isRecentSearch}
             recentKeywords={getRecentKeywords()}
+            selectedIndex={selectedIndex}
           />
         ) : null}
       </S.SearchContainer>

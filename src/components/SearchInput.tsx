@@ -1,33 +1,79 @@
-import React from 'react';
 import { SearchClose, SearchOutlined } from 'assets/icons';
+import { SearchResult } from 'pages/Home';
+import React from 'react';
 import styled from 'styled-components';
 
 interface SearchInputProps {
   searchTerm: string;
+  data: SearchResult[];
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSearch: (keyword: string) => void;
   onSearch: () => void;
   onInputClick: () => void;
   showSuggestionModal: boolean;
   onFocus: () => void;
   isRecentSearch: boolean;
+  recentKeywords: string[];
+  selectedIndex: number | null;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({
   searchTerm,
   onInputChange,
+  handleSearch,
   onSearch,
   onInputClick,
   showSuggestionModal,
   onFocus,
   isRecentSearch,
+  data,
+  recentKeywords,
+  selectedIndex,
+  setSelectedIndex,
 }) => {
   const handleClearInput = () => {
     onInputChange({ target: { value: '' } } as any);
   };
 
+  const handleEnterKey = (dataToUse: SearchResult[] | string[]) => {
+    if (selectedIndex === null || !dataToUse || !dataToUse[selectedIndex]) {
+      handleSearch(searchTerm);
+    } else {
+      const keyword = isRecentSearch
+        ? (dataToUse[selectedIndex] as string)
+        : (dataToUse[selectedIndex] as SearchResult).name;
+      handleSearch(keyword);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSearch();
+    const dataToUse = isRecentSearch ? recentKeywords : data;
+
+    switch (e.key) {
+      case 'Enter':
+        handleEnterKey(dataToUse);
+        break;
+      case 'ArrowDown':
+        setSelectedIndex((prevIndex) => {
+          const newIndex =
+            prevIndex === null || !dataToUse || prevIndex >= dataToUse.length - 1
+              ? 0
+              : prevIndex + 1;
+          return newIndex;
+        });
+        break;
+      case 'ArrowUp':
+        setSelectedIndex((prevIndex) => {
+          const newIndex =
+            prevIndex === null || !dataToUse || prevIndex <= 0
+              ? dataToUse.length - 1
+              : prevIndex - 1;
+          return newIndex;
+        });
+        break;
+      default:
+        break;
     }
   };
 
@@ -43,6 +89,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         <S.Input
           name="q"
           type="search"
+          autoComplete="off"
           value={searchTerm}
           onChange={onInputChange}
           onClick={onInputClick}

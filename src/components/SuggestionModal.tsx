@@ -2,22 +2,23 @@ import { SearchOutlined } from 'assets/icons';
 import { SearchResult } from 'pages/Home';
 import styled from 'styled-components';
 
-interface SuggestionModalProps {
-  data: SearchResult[];
-  isRecentSearch: boolean;
-  recentKeywords: string[];
-}
-
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   <S.RecentSearchHeader>
     <h2>{title}</h2>
   </S.RecentSearchHeader>
 );
 
-const KeywordList: React.FC<{ recentKeywords: string[] }> = ({ recentKeywords }) => (
+const KeywordList: React.FC<{ recentKeywords: string[]; selectedIndex: number | null }> = ({
+  recentKeywords,
+  selectedIndex,
+}) => (
   <S.RecentSearchList>
     {recentKeywords?.map((keyword, index) => (
-      <S.RecentSearchItem key={`recent-search-${index}`}>
+      <S.RecentSearchItem
+        key={`recent-search-${index}`}
+        tabIndex={0}
+        isSelected={selectedIndex === index}
+      >
         <S.RecentSearchIconBtn type="button">
           <SearchOutlined color="#d6cdcd" />
         </S.RecentSearchIconBtn>
@@ -27,10 +28,15 @@ const KeywordList: React.FC<{ recentKeywords: string[] }> = ({ recentKeywords })
   </S.RecentSearchList>
 );
 
-const SearchResultList: React.FC<{ data: SearchResult[] }> = ({ data }) => (
+interface SearchResultListProps {
+  data: SearchResult[];
+  selectedIndex: number | null;
+}
+
+const SearchResultList: React.FC<SearchResultListProps> = ({ data, selectedIndex }) => (
   <S.RecentSearchList>
-    {data?.map((item) => (
-      <S.RecentSearchItem key={item.id}>
+    {data?.map((item, index) => (
+      <S.RecentSearchItem key={item.id} tabIndex={0} isSelected={selectedIndex === index}>
         <S.RecentSearchIconBtn type="button">
           <SearchOutlined color="#d6cdcd" />
         </S.RecentSearchIconBtn>
@@ -40,10 +46,18 @@ const SearchResultList: React.FC<{ data: SearchResult[] }> = ({ data }) => (
   </S.RecentSearchList>
 );
 
+interface SuggestionModalProps {
+  data: SearchResult[];
+  isRecentSearch: boolean;
+  recentKeywords: string[];
+  selectedIndex: number | null;
+}
+
 const SuggestionModal: React.FC<SuggestionModalProps> = ({
   data,
   isRecentSearch,
   recentKeywords,
+  selectedIndex,
 }) => {
   return (
     <S.RecentSearchSection>
@@ -52,7 +66,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
           {recentKeywords.length > 0 ? (
             <>
               <SectionHeader title="최근 검색어" />
-              <KeywordList recentKeywords={recentKeywords} />
+              <KeywordList recentKeywords={recentKeywords} selectedIndex={selectedIndex} />
             </>
           ) : (
             <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
@@ -63,7 +77,7 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
           {data && data.length > 0 ? (
             <>
               <SectionHeader title="검색 결과" />
-              <SearchResultList data={data} />
+              <SearchResultList data={data} selectedIndex={selectedIndex} />
             </>
           ) : (
             <S.NoRecentSearchText>검색 결과가 없습니다.</S.NoRecentSearchText>
@@ -96,11 +110,12 @@ const S = {
     overflow: hidden;
   `,
 
-  RecentSearchItem: styled.li`
+  RecentSearchItem: styled.li<{ isSelected?: boolean }>`
     display: flex;
     align-items: center;
     padding: 10px 0;
     cursor: pointer;
+    background-color: ${({ isSelected }) => (isSelected ? '#f5f5f5' : 'transparent')};
 
     :hover {
       background-color: #f5f5f5;
