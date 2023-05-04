@@ -4,20 +4,33 @@ const useCache = <T>() => {
       value,
       expiry: new Date().getTime() + ttl,
     };
-    sessionStorage.setItem(key, JSON.stringify(item));
+
+    const cache = sessionStorage.getItem('inputCache');
+    const cacheData = cache ? JSON.parse(cache) : {};
+    cacheData[key] = item;
+    sessionStorage.setItem('inputCache', JSON.stringify(cacheData));
   };
 
   const getCacheWithExpiry = (key: string): T | null => {
-    const itemStr = sessionStorage.getItem(key);
-    if (!itemStr) {
+    const cache = sessionStorage.getItem('inputCache');
+    if (!cache) {
       return null;
     }
-    const item = JSON.parse(itemStr);
+
+    const cacheData = JSON.parse(cache);
+    const item = cacheData[key];
+
+    if (!item) {
+      return null;
+    }
+
     const currentTime = new Date().getTime();
     if (currentTime > item.expiry) {
-      sessionStorage.removeItem(key);
+      delete cacheData[key];
+      sessionStorage.setItem('inputCache', JSON.stringify(cacheData));
       return null;
     }
+
     return item.value;
   };
 
