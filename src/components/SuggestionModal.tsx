@@ -8,6 +8,38 @@ interface SuggestionModalProps {
   recentKeywords: string[];
 }
 
+const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
+  <S.RecentSearchHeader>
+    <h2>{title}</h2>
+  </S.RecentSearchHeader>
+);
+
+const KeywordList: React.FC<{ recentKeywords: string[] }> = ({ recentKeywords }) => (
+  <S.RecentSearchList>
+    {recentKeywords?.map((keyword, index) => (
+      <S.RecentSearchItem key={`recent-search-${index}`}>
+        <S.RecentSearchIconBtn type="button">
+          <SearchOutlined color="#d6cdcd" />
+        </S.RecentSearchIconBtn>
+        <S.RecentSearchTextBtn type="button">{keyword}</S.RecentSearchTextBtn>
+      </S.RecentSearchItem>
+    ))}
+  </S.RecentSearchList>
+);
+
+const SearchResultList: React.FC<{ data: SearchResult[] }> = ({ data }) => (
+  <S.RecentSearchList>
+    {data?.map((item) => (
+      <S.RecentSearchItem key={item.id}>
+        <S.RecentSearchIconBtn type="button">
+          <SearchOutlined color="#d6cdcd" />
+        </S.RecentSearchIconBtn>
+        <S.RecentSearchTextBtn type="button">{item.name}</S.RecentSearchTextBtn>
+      </S.RecentSearchItem>
+    ))}
+  </S.RecentSearchList>
+);
+
 const SuggestionModal: React.FC<SuggestionModalProps> = ({
   data,
   isRecentSearch,
@@ -17,38 +49,27 @@ const SuggestionModal: React.FC<SuggestionModalProps> = ({
     <S.RecentSearchSection>
       {isRecentSearch ? (
         <>
-          <S.RecentSearchHeader>
-            <h2>최근 검색어</h2>
-          </S.RecentSearchHeader>
-          <S.RecentSearchList>
-            {recentKeywords?.map((keyword, index) => (
-              <S.RecentSearchItem key={`recent-search-${index}`}>
-                <S.RecentSearchIconBtn type="button">
-                  <SearchOutlined color="#d6cdcd" />
-                </S.RecentSearchIconBtn>
-                <S.RecentSearchTextBtn type="button">{keyword}</S.RecentSearchTextBtn>
-              </S.RecentSearchItem>
-            ))}
-          </S.RecentSearchList>
+          {recentKeywords.length > 0 ? (
+            <>
+              <SectionHeader title="최근 검색어" />
+              <KeywordList recentKeywords={recentKeywords} />
+            </>
+          ) : (
+            <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
+          )}
         </>
       ) : (
         <>
-          <S.RecentSearchHeader>
-            <h2>검색 결과</h2>
-          </S.RecentSearchHeader>
-          <S.RecentSearchList>
-            {data?.map((item) => (
-              <S.RecentSearchItem key={item.id}>
-                <S.RecentSearchIconBtn type="button">
-                  <SearchOutlined color="#d6cdcd" />
-                </S.RecentSearchIconBtn>
-                <S.RecentSearchTextBtn type="button">{item.name}</S.RecentSearchTextBtn>
-              </S.RecentSearchItem>
-            ))}
-          </S.RecentSearchList>
+          {data && data.length > 0 ? (
+            <>
+              <SectionHeader title="검색 결과" />
+              <SearchResultList data={data} />
+            </>
+          ) : (
+            <S.NoRecentSearchText>검색 결과가 없습니다.</S.NoRecentSearchText>
+          )}
         </>
       )}
-      <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
     </S.RecentSearchSection>
   );
 };
