@@ -51,6 +51,7 @@ interface ISuggestionModalProps {
   isRecentSearch: boolean;
   recentKeywords: string[];
   selectedIndex: number | null;
+  isLoading: boolean;
 }
 
 const SuggestionModal: React.FC<ISuggestionModalProps> = ({
@@ -58,6 +59,7 @@ const SuggestionModal: React.FC<ISuggestionModalProps> = ({
   isRecentSearch,
   recentKeywords,
   selectedIndex,
+  isLoading,
 }) => {
   return (
     <S.RecentSearchSection>

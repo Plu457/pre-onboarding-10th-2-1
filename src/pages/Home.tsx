@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
+import { useSearchContext } from 'context/SearchContext';
 import { fetchSearchResults, useDebounce, useSearch } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
 import { useClickOutside } from 'hooks';
@@ -11,12 +12,18 @@ export interface ISearchResult {
 }
 
 const Home = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
-  const [isRecentSearch, setIsRecentSearch] = useState(true);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const {
+    searchTerm,
+    setSearchTerm,
+    showSuggestionModal,
+    setShowSuggestionModal,
+    isRecentSearch,
+    setIsRecentSearch,
+    selectedIndex,
+    setSelectedIndex,
+  } = useSearchContext();
 
-  const { data, search, clearData, saveRecentKeyword, getRecentKeywords } =
+  const { data, isLoading, search, clearData, saveRecentKeyword, getRecentKeywords } =
     useSearch(fetchSearchResults);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -76,6 +83,7 @@ const Home = () => {
             isRecentSearch={isRecentSearch}
             recentKeywords={getRecentKeywords()}
             selectedIndex={selectedIndex}
+            isLoading={isLoading}
           />
         ) : null}
       </S.SearchContainer>
