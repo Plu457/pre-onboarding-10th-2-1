@@ -1,11 +1,11 @@
 import { SearchClose, SearchOutlined } from 'assets/icons';
-import { SearchResult } from 'pages/Home';
+import { ISearchResult } from 'pages/Home';
 import React from 'react';
 import styled from 'styled-components';
 
-interface SearchInputProps {
+interface ISearchInputProps {
   searchTerm: string;
-  data: SearchResult[];
+  data: ISearchResult[];
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSearch: (keyword: string) => void;
   onSearch: () => void;
@@ -18,7 +18,7 @@ interface SearchInputProps {
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({
+const SearchInput: React.FC<ISearchInputProps> = ({
   searchTerm,
   onInputChange,
   handleSearch,
@@ -36,13 +36,13 @@ const SearchInput: React.FC<SearchInputProps> = ({
     onInputChange({ target: { value: '' } } as any);
   };
 
-  const handleEnterKey = (dataToUse: SearchResult[] | string[]) => {
+  const handleEnterKey = (dataToUse: ISearchResult[] | string[]) => {
     if (selectedIndex === null || !dataToUse || !dataToUse[selectedIndex]) {
       handleSearch(searchTerm);
     } else {
       const keyword = isRecentSearch
         ? (dataToUse[selectedIndex] as string)
-        : (dataToUse[selectedIndex] as SearchResult).name;
+        : (dataToUse[selectedIndex] as ISearchResult).name;
       handleSearch(keyword);
     }
   };

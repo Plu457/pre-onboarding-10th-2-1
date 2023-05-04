@@ -1,5 +1,5 @@
 import { SearchOutlined } from 'assets/icons';
-import { SearchResult } from 'pages/Home';
+import { ISearchResult } from 'pages/Home';
 import styled from 'styled-components';
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
@@ -28,12 +28,12 @@ const KeywordList: React.FC<{ recentKeywords: string[]; selectedIndex: number | 
   </S.RecentSearchList>
 );
 
-interface SearchResultListProps {
-  data: SearchResult[];
+interface ISearchResultListProps {
+  data: ISearchResult[];
   selectedIndex: number | null;
 }
 
-const SearchResultList: React.FC<SearchResultListProps> = ({ data, selectedIndex }) => (
+const SearchResultList: React.FC<ISearchResultListProps> = ({ data, selectedIndex }) => (
   <S.RecentSearchList>
     {data?.map((item, index) => (
       <S.RecentSearchItem key={item.id} tabIndex={0} isSelected={selectedIndex === index}>
@@ -46,14 +46,14 @@ const SearchResultList: React.FC<SearchResultListProps> = ({ data, selectedIndex
   </S.RecentSearchList>
 );
 
-interface SuggestionModalProps {
-  data: SearchResult[];
+interface ISuggestionModalProps {
+  data: ISearchResult[];
   isRecentSearch: boolean;
   recentKeywords: string[];
   selectedIndex: number | null;
 }
 
-const SuggestionModal: React.FC<SuggestionModalProps> = ({
+const SuggestionModal: React.FC<ISuggestionModalProps> = ({
   data,
   isRecentSearch,
   recentKeywords,

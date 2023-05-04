@@ -5,7 +5,7 @@ import { fetchSearchResults, useDebounce, useSearch } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
 import { useClickOutside } from 'hooks';
 
-export interface SearchResult {
+export interface ISearchResult {
   name: string;
   id: number;
 }

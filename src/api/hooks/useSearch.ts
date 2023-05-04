@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useCache from './useCache';
 import useRecentKeywords from './useRecentKeywords';
 
-interface UseSearchReturnType<T> {
+interface IUseSearchReturnType<T> {
   data: T | undefined;
   isLoading: boolean;
   error: Error | undefined;
@@ -16,7 +16,7 @@ interface UseSearchReturnType<T> {
   getCacheWithExpiry: (key: string) => T | null;
 }
 
-const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): UseSearchReturnType<T> => {
+const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): IUseSearchReturnType<T> => {
   const [data, setData] = useState<T | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | undefined>(undefined);
