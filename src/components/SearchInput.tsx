@@ -25,6 +25,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
     onInputChange({ target: { value: '' } } as any);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearch();
+    }
+  };
+
   return (
     <>
       <S.InputWrapper>
@@ -41,6 +47,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
           onChange={onInputChange}
           onClick={onInputClick}
           onFocus={onFocus}
+          onKeyDown={handleKeyDown}
         />
         {searchTerm ? (
           <S.ClearButton onClick={handleClearInput}>
