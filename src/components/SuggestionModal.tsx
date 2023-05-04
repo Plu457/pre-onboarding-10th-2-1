@@ -63,7 +63,9 @@ const SuggestionModal: React.FC<ISuggestionModalProps> = ({
 }) => {
   return (
     <S.RecentSearchSection>
-      {isRecentSearch ? (
+      {isLoading ? (
+        <S.LoadingText>검색 중입니다...</S.LoadingText>
+      ) : isRecentSearch ? (
         <>
           {recentKeywords.length > 0 ? (
             <>
@@ -122,6 +124,10 @@ const S = {
     :hover {
       background-color: #f5f5f5;
     }
+  `,
+
+  LoadingText: styled.p`
+    // ...your styles here
   `,
 
   RecentSearchIconBtn: styled.button`
