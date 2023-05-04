@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+
 import { fetchSearchResults, useDebounce, useSearch } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
+import { useClickOutside } from 'hooks';
 
 export interface SearchResult {
   name: string;
@@ -28,19 +30,10 @@ const Home = () => {
   }, [debouncedSearchTerm]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setShowSuggestionModal(false);
-        setSearchTerm('');
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  useClickOutside(wrapperRef, () => {
+    setShowSuggestionModal(false);
+    setSearchTerm('');
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
