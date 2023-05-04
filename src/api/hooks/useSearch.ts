@@ -13,7 +13,7 @@ export interface IUseSearchReturnType<T> {
   saveRecentKeyword: (keyword: string) => void;
   getRecentKeywords: () => string[];
   setCacheWithExpiry: (key: string, value: T, ttl: number) => void;
-  getCacheWithExpiry: (key: string) => T | null;
+  getCacheWithExpiry: (key: string) => Promise<T | null>;
 }
 
 const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): IUseSearchReturnType<T> => {
@@ -25,7 +25,6 @@ const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): IUseSearchR
   const { saveRecentKeyword, getRecentKeywords } = useRecentKeywords();
 
   const search = async (searchTerm: string) => {
-    console.info('calling api');
     try {
       setIsLoading(true);
       await cacheSearch(searchTerm);
@@ -40,14 +39,15 @@ const useSearch = <T>(fetchAPI: (searchTerm: string) => Promise<T>): IUseSearchR
 
   const cacheSearch = async (searchTerm: string) => {
     const cacheKey = `inputCache_${searchTerm}`;
-    const cacheData = getCacheWithExpiry(cacheKey);
+    const cacheData = await getCacheWithExpiry(cacheKey);
 
     if (cacheData) {
       setData(cacheData as T);
       setIsLoading(false);
     } else {
+      console.info('calling api');
       const responseData = await fetchAPI(searchTerm);
-      const expiryTime = 1 * 60 * 1000; //* test 1분
+      const expiryTime = 1 * 60 * 1000; // * test 1분
       setCacheWithExpiry(cacheKey, responseData, expiryTime);
       setData(responseData);
     }
