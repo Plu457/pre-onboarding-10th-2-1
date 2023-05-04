@@ -9,17 +9,13 @@ const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
   </S.RecentSearchHeader>
 );
 
-const KeywordList: React.FC<{ recentKeywords: string[]; selectedIndex: number | null }> = ({
-  recentKeywords,
+const KeywordList: React.FC<{ keywords: string[]; selectedIndex: number | null }> = ({
+  keywords,
   selectedIndex,
 }) => (
   <S.RecentSearchList>
-    {recentKeywords?.map((keyword, index) => (
-      <S.RecentSearchItem
-        key={`recent-search-${index}`}
-        tabIndex={0}
-        isSelected={selectedIndex === index}
-      >
+    {keywords.map((keyword, index) => (
+      <S.RecentSearchItem key={`search-${index}`} tabIndex={0} isSelected={selectedIndex === index}>
         <S.RecentSearchIconBtn type="button">
           <SearchOutlined color="#d6cdcd" />
         </S.RecentSearchIconBtn>
@@ -36,7 +32,7 @@ interface ISearchResultListProps {
 
 const SearchResultList: React.FC<ISearchResultListProps> = ({ data, selectedIndex }) => (
   <S.RecentSearchList>
-    {data?.map((item, index) => (
+    {data.map((item, index) => (
       <S.RecentSearchItem key={item.id} tabIndex={0} isSelected={selectedIndex === index}>
         <S.RecentSearchIconBtn type="button">
           <SearchOutlined color="#d6cdcd" />
@@ -52,35 +48,35 @@ const SuggestionModal: React.FC = () => {
 
   const recentKeywords = getRecentKeywords();
 
-  return (
-    <S.RecentSearchSection>
-      {isLoading ? (
-        <S.LoadingText>검색 중입니다...</S.LoadingText>
-      ) : isRecentSearch ? (
+  const renderContent = () => {
+    if (isLoading) {
+      return <S.LoadingText>검색 중입니다...</S.LoadingText>;
+    }
+
+    if (isRecentSearch) {
+      if (recentKeywords.length > 0) {
+        return (
+          <>
+            <SectionHeader title="최근 검색어" />
+            <KeywordList keywords={recentKeywords} selectedIndex={selectedIndex} />
+          </>
+        );
+      }
+      return <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>;
+    }
+
+    if (data && data.length > 0) {
+      return (
         <>
-          {recentKeywords.length > 0 ? (
-            <>
-              <SectionHeader title="최근 검색어" />
-              <KeywordList recentKeywords={recentKeywords} selectedIndex={selectedIndex} />
-            </>
-          ) : (
-            <S.NoRecentSearchText>최근 검색어가 없습니다.</S.NoRecentSearchText>
-          )}
+          <SectionHeader title="검색 결과" />
+          <SearchResultList data={data} selectedIndex={selectedIndex} />
         </>
-      ) : (
-        <>
-          {data && data.length > 0 ? (
-            <>
-              <SectionHeader title="검색 결과" />
-              <SearchResultList data={data} selectedIndex={selectedIndex} />
-            </>
-          ) : (
-            <S.NoRecentSearchText>검색 결과가 없습니다.</S.NoRecentSearchText>
-          )}
-        </>
-      )}
-    </S.RecentSearchSection>
-  );
+      );
+    }
+
+    return <S.NoRecentSearchText>검색 결과가 없습니다.</S.NoRecentSearchText>;
+  };
+  return <S.RecentSearchSection>{renderContent()}</S.RecentSearchSection>;
 };
 
 export default SuggestionModal;
