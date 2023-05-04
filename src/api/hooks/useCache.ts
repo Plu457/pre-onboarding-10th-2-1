@@ -7,6 +7,16 @@ const useCache = <T>() => {
 
     const cache = sessionStorage.getItem('inputCache');
     const cacheData = cache ? JSON.parse(cache) : {};
+
+    const maxCacheSize = 30;
+    if (Object.keys(cacheData).length >= maxCacheSize) {
+      const oldestKey = Object.keys(cacheData).reduce((oldest, current) => {
+        return cacheData[current].expiry < cacheData[oldest].expiry ? current : oldest;
+      });
+
+      delete cacheData[oldestKey];
+    }
+
     cacheData[key] = item;
     sessionStorage.setItem('inputCache', JSON.stringify(cacheData));
   };
