@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useCache from './useCache';
 import useRecentKeywords from './useRecentKeywords';
 
-interface IUseSearchReturnType<T> {
+export interface IUseSearchReturnType<T> {
   data: T | undefined;
   isLoading: boolean;
   error: Error | undefined;

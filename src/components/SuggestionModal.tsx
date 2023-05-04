@@ -1,4 +1,5 @@
 import { SearchOutlined } from 'assets/icons';
+import { useSearchContext } from 'context/SearchContext';
 import { ISearchResult } from 'pages/Home';
 import styled from 'styled-components';
 
@@ -46,21 +47,11 @@ const SearchResultList: React.FC<ISearchResultListProps> = ({ data, selectedInde
   </S.RecentSearchList>
 );
 
-interface ISuggestionModalProps {
-  data: ISearchResult[];
-  isRecentSearch: boolean;
-  recentKeywords: string[];
-  selectedIndex: number | null;
-  isLoading: boolean;
-}
+const SuggestionModal: React.FC = () => {
+  const { data, isLoading, isRecentSearch, selectedIndex, getRecentKeywords } = useSearchContext();
 
-const SuggestionModal: React.FC<ISuggestionModalProps> = ({
-  data,
-  isRecentSearch,
-  recentKeywords,
-  selectedIndex,
-  isLoading,
-}) => {
+  const recentKeywords = getRecentKeywords();
+
   return (
     <S.RecentSearchSection>
       {isLoading ? (
@@ -126,9 +117,7 @@ const S = {
     }
   `,
 
-  LoadingText: styled.p`
-    // ...your styles here
-  `,
+  LoadingText: styled.p``,
 
   RecentSearchIconBtn: styled.button`
     cursor: pointer;

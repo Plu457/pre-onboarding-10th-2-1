@@ -1,37 +1,43 @@
 import { SearchClose, SearchOutlined } from 'assets/icons';
+import { useSearchContext } from 'context/SearchContext';
 import { ISearchResult } from 'pages/Home';
 import React from 'react';
 import styled from 'styled-components';
 
-interface ISearchInputProps {
-  searchTerm: string;
-  data: ISearchResult[];
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSearch: (keyword: string) => void;
-  onSearch: () => void;
-  onInputClick: () => void;
-  showSuggestionModal: boolean;
-  onFocus: () => void;
-  isRecentSearch: boolean;
-  recentKeywords: string[];
-  selectedIndex: number | null;
-  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
-}
+const SearchInput: React.FC = () => {
+  const {
+    data,
+    searchTerm,
+    selectedIndex,
+    isRecentSearch,
+    setSelectedIndex,
+    setShowSuggestionModal,
+    showSuggestionModal,
+    setIsRecentSearch,
+    getRecentKeywords,
+    saveRecentKeyword,
+    search,
+    setSearchTerm,
+  } = useSearchContext();
 
-const SearchInput: React.FC<ISearchInputProps> = ({
-  searchTerm,
-  onInputChange,
-  handleSearch,
-  onSearch,
-  onInputClick,
-  showSuggestionModal,
-  onFocus,
-  isRecentSearch,
-  data,
-  recentKeywords,
-  selectedIndex,
-  setSelectedIndex,
-}) => {
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    setIsRecentSearch(value.length === 0);
+  };
+  const handleSearch = (keyword: string) => {
+    saveRecentKeyword(keyword);
+    search(keyword, true);
+    setSelectedIndex(null);
+  };
+  const onSearch = () => handleSearch(searchTerm);
+  const onInputClick = () => setShowSuggestionModal(true);
+  const recentKeywords = getRecentKeywords();
+  const onFocus = () => {
+    setShowSuggestionModal(true);
+    setIsRecentSearch(true);
+  };
+
   const handleClearInput = () => {
     onInputChange({ target: { value: '' } } as any);
   };

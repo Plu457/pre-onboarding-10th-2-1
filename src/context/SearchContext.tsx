@@ -1,6 +1,8 @@
+import { fetchSearchResults } from 'api';
+import useSearch, { IUseSearchReturnType } from 'api/hooks/useSearch';
 import React, { createContext, useContext, useState } from 'react';
 
-interface ISearchContext {
+interface ISearchContext extends IUseSearchReturnType<any> {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   showSuggestionModal: boolean;
@@ -31,9 +33,12 @@ export const SearchProvider: React.FC<ISearchProviderProps> = ({ children }) => 
   const [isRecentSearch, setIsRecentSearch] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
+  const searchContext = useSearch(fetchSearchResults);
+
   return (
     <SearchContext.Provider
       value={{
+        ...searchContext,
         searchTerm,
         setSearchTerm,
         showSuggestionModal,

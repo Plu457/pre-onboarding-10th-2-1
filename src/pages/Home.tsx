@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 
-import { useSearchContext } from 'context/SearchContext';
-import { fetchSearchResults, useDebounce, useSearch } from 'api';
+import { useDebounce } from 'api';
 import { SearchInput, SuggestionModal } from 'components';
+import { useSearchContext } from 'context/SearchContext';
 import { useClickOutside } from 'hooks';
 
 export interface ISearchResult {
@@ -17,14 +17,9 @@ const Home = () => {
     setSearchTerm,
     showSuggestionModal,
     setShowSuggestionModal,
-    isRecentSearch,
-    setIsRecentSearch,
-    selectedIndex,
-    setSelectedIndex,
+    search,
+    clearData,
   } = useSearchContext();
-
-  const { data, isLoading, search, clearData, saveRecentKeyword, getRecentKeywords } =
-    useSearch(fetchSearchResults);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   useEffect(() => {
@@ -42,50 +37,14 @@ const Home = () => {
     setSearchTerm('');
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    setIsRecentSearch(value.length === 0);
-  };
-
-  const handleSearch = (keyword: string) => {
-    saveRecentKeyword(keyword);
-    search(keyword, true);
-    setSelectedIndex(null);
-  };
-
   return (
     <S.FakeMain>
       <S.SearchContainer ref={wrapperRef}>
         <S.Header style={{ borderColor: showSuggestionModal ? '#4a94e4' : '#ffffff' }}>
           <S.Title>질환명을 검색해주세요.</S.Title>
-          <SearchInput
-            data={data}
-            searchTerm={searchTerm}
-            onInputChange={handleInputChange}
-            handleSearch={handleSearch}
-            onSearch={() => handleSearch(searchTerm)}
-            onInputClick={() => setShowSuggestionModal(true)}
-            showSuggestionModal={showSuggestionModal}
-            onFocus={() => {
-              setShowSuggestionModal(true);
-              setIsRecentSearch(true);
-            }}
-            isRecentSearch={isRecentSearch}
-            selectedIndex={selectedIndex}
-            setSelectedIndex={setSelectedIndex}
-            recentKeywords={getRecentKeywords()}
-          />
+          <SearchInput />
         </S.Header>
-        {showSuggestionModal ? (
-          <SuggestionModal
-            data={data}
-            isRecentSearch={isRecentSearch}
-            recentKeywords={getRecentKeywords()}
-            selectedIndex={selectedIndex}
-            isLoading={isLoading}
-          />
-        ) : null}
+        {showSuggestionModal ? <SuggestionModal /> : null}
       </S.SearchContainer>
     </S.FakeMain>
   );
